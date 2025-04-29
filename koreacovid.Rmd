@@ -1,7 +1,7 @@
 ---
 title: "Initial Korean covid 19"
-author: "your name here"
-date: "todays date"
+author: "Daniel Purri"
+date: "Spring 2025"
 output:
   html_document: default
   pdf_document: default
@@ -33,23 +33,43 @@ state of a patient must be died or alive - we adjust that as well
 
 
 ## Graphical results - use ggplot commands to do this  
+```{r}
+dd2 <- kRdata %>% group_by(result,Sex) %>% summarize(count=n()) %>% mutate(prcnt=count/sum(count))
 
 
+# the group_by followed by summarize(count=n())
 
-  
+basicC <- ggplot(dd2,aes(x=result,y=count,fill=Sex))
+basicC + geom_bar(stat="identity",position="dodge")
 
+#Now for percentage plot
 
+basicCC <- ggplot(dd2,aes(x=result,y=prcnt*100,fill=Sex)) 
+basicCC + geom_bar(stat="identity", position = "dodge")
+```
 
-
+The amount of females who COVID and lived is more than males. However, out of the ones who got COVID and passed, the percentage of men who died is larger than the percent of women who died.
 
   
 ## Numerical results
 
+```{r}
+table1 <- xtabs(~result + Sex, data=kRdata)
+rowPerc(table1)
+colPerc(table1)
+```
+Out of the alive group, 12 more women than men survived. Out of the dead group, about 38 more men than women died. 98.7% females lived, while 1.4% of them died. 97% of men lived, while 3% of the men died. Percentage wise, COIVD killed about twice the amount of men than it did women.
+
 
 ## Inferential results 
-
-
+```{r}
+chisq.test(table1)
+chisqtestGC(table1)
+fisher.test(table1)
+```
+In our Chi-Square results, we recieved a p-value of 0.0012. Since this value is <0.05 we reject our null. In our fisher's test, we recieved a p-value of 0.0009 which is also <0.05, we again will be rejecting the null hypothesis.
 
 
 ## Conclusions
 
+The question we were addressing was if dying of COVID is independent of sex. We used a sample from Korea and used graphical, numerical, and infrential results to answer this question. We saw that 98.7% females lived, while 1.4% of them died. 97% of men lived, while 3% of them men died. Percentage wise, COVID killed about twice the amount of men that it did women. Eventually, we decided that our null hypothesis (that dying is not independent of sex) was rejected due to receiving p-value less than the value of signigicance(0.0012 and 0.009).
